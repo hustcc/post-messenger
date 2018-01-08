@@ -1,0 +1,32 @@
+{
+  "name": "message-poster",
+  "version": "1.0.0",
+  "description": "A wrapper of window.postMessage for iframes.",
+  "main": "lib/message-poster.min.js",
+  "scripts": {
+    "test": "echo success.",
+    "clean": "rimraf ./lib",
+    "dev": "npm run clean && cross-env NODE_ENV=production webpack --watch",
+    "build": "npm run clean && cross-env NODE_ENV=production webpack",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.alipay-inc.com:di-open/message-poster.git"
+  },
+  "keywords": [
+    "postMessage",
+    "iframe"
+  ],
+  "author": "ProtoTeam",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "cross-env": "^5.1.3",
+    "rimraf": "^2.6.2",
+    "webpack": "^3.10.0"
+  }
+}
