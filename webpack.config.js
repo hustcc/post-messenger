@@ -9,9 +9,9 @@ const webpack = require('webpack');
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'message-poster.min.js',
+    filename: 'post-messenger.min.js',
     path: path.resolve(__dirname, 'lib'),
-    library: 'MessagePoster',
+    library: 'PostMessenger',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },

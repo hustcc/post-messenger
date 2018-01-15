@@ -2,5 +2,6 @@
   "presets": ["env"],
   "plugins": [
     "transform-class-properties",
+    "add-module-exports"
   ]
 }

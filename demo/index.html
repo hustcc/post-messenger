@@ -2,19 +2,34 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>message-poster  - demo Index.</title>
-	<link type="text/css" href="./style.css" />
+	<title>post-messenger - parent</title>
+	<style>
+		iframe, pre {
+			width: 100%;
+		}
+	</style>
 </head>
 <body>
 	<div id="root">
 		<pre id="list"></pre>
-		<iframe src="./iframe.html"></iframe>
+		<iframe name="iframe_name" src="./iframe.html"></iframe>
 		<div>
-			<input type="button" value="Listen" />
-			<input type="button" value="Cancel Listen" />
-			<input type="button" value="Send" />
+			<input type="button" value="Send" onclick="javascript: sendMessage()" />
 		</div>
 	</div>
-<script src="../lib/message-poster.min.js" type="application/javascript"></script>
+<script src="../lib/post-messenger.min.js" type="application/javascript"></script>
+<script type="application/javascript">
+	var messenger = new PostMessenger('uniqueId', window.iframe_name);
+
+  messenger.on(function(message) {
+		const r = document.querySelector('#list');
+		console.log(message);
+		r.innerHTML = r.innerHTML + '\n' + message;
+  });
+
+	function sendMessage() {
+    messenger.send(new Date() + ', Hello world.');
+	}
+</script>
 </body>
 </html>

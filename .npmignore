@@ -3,6 +3,7 @@ coverage
 __tests__
 site
 doc
+demo
 src
 .gitignore
 .travis.yml

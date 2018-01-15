@@ -1,8 +1,8 @@
 {
-  "name": "message-poster",
-  "version": "1.0.0",
-  "description": "A wrapper of window.postMessage for iframes.",
-  "main": "lib/message-poster.min.js",
+  "name": "post-messenger",
+  "version": "0.0.2",
+  "description": "A simple wrapper of window.postMessage for iframes.",
+  "main": "lib/post-messenger.min.js",
   "scripts": {
     "test": "echo success.",
     "clean": "rimraf ./lib",
@@ -12,17 +12,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.alipay-inc.com:di-open/message-poster.git"
+    "url": "git@github.com:hustcc/post-messager.git"
   },
   "keywords": [
     "postMessage",
-    "iframe"
+    "iframe",
+    "post-messager"
   ],
   "author": "ProtoTeam",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.6.1",
     "cross-env": "^5.1.3",

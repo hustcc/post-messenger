@@ -1,126 +1,88 @@
+/**
+ * Created by hustcc on 18/1/8.
+ * Contract: i@hust.cc
+ */
 
-window.Messenger = (function(){
+import { invariant } from './utils';
 
-    // 消息前缀, 建议使用自己的项目名, 避免多项目之间的冲突
-    // !注意 消息前缀应使用字符串类型
-    var prefix = "[PROJECT_NAME]",
-        supportPostMessage = 'postMessage' in window;
+/**
+ * const messenger = new Messenger('appid', window.parent);
+ *
+ * messenger.on((message) => { }); // listen
+ *
+ * messenger.send('Hello world'); // send message to window.parent
+ *
+ * messenger.off(); // un listen
+ */
+class Messenger {
+  constructor(project, target, origin = '*') {
+    invariant(!project.includes('-'), 'Project can not contains `-`.');
+    this.project = project; // project 是一个唯一的 id，可以用于做消息验证
+    this.target = typeof target === 'string' ? document.querySelector(target) : target;
+    this.origin = origin;
 
-    // Target 类, 消息对象
-    function Target(target, name, prefix){
-        var errMsg = '';
-        if(arguments.length < 2){
-            errMsg = 'target error - target and name are both required';
-        } else if (typeof target != 'object'){
-            errMsg = 'target error - target itself must be window object';
-        } else if (typeof name != 'string'){
-            errMsg = 'target error - target name must be string type';
-        }
-        if(errMsg){
-            throw new Error(errMsg);
-        }
-        this.target = target;
-        this.name = name;
-        this.prefix = prefix;
+    this.listener = null;
+  }
+
+  on = listener => {
+    if (typeof listener !== 'function') {
+      return;
     }
-
-    // 往 target 发送消息, 出于安全考虑, 发送消息会带上前缀
-    if ( supportPostMessage ){
-        // IE8+ 以及现代浏览器支持
-        Target.prototype.send = function(msg){
-            this.target.postMessage(this.prefix + '|' + this.name + '__Messenger__' + msg, '*');
-        };
+    if (!this.listener) {
+      this.listener = this._wrapFunc(listener);
+      // 监听事件
+      if (window.addEventListener) {
+        window.addEventListener('message', this.listener, false);
+      } else if (window.attachEvent) {
+        window.attachEvent('onmessage', this.listener);
+      }
     } else {
-        // 兼容IE 6/7
-        Target.prototype.send = function(msg){
-            var targetFunc = window.navigator[this.prefix + this.name];
-            if ( typeof targetFunc == 'function' ) {
-                targetFunc(this.prefix + msg, window);
-            } else {
-                throw new Error("target callback function is not defined");
-            }
-        };
+      invariant(false, 'Listener is exist.');
     }
+  };
 
-    // 信使类
-    // 创建Messenger实例时指定, 必须指定Messenger的名字, (可选)指定项目名, 以避免Mashup类应用中的冲突
-    // !注意: 父子页面中projectName必须保持一致, 否则无法匹配
-    function Messenger(messengerName, projectName){
-        this.targets = {};
-        this.name = messengerName;
-        this.listenFunc = [];
-        this.prefix = projectName || prefix;
-        this.initListen();
+
+  off = () => {
+    if (this.listener) {
+      // 取消事件
+      if (window.removeEventListener) {
+        window.removeEventListener('message', this.listener, false);
+      } else if (window.attachEvent) {
+        window.attachEvent('onmessage', this.listener);
+      }
+      this.listener = null;
+    } else {
+      invariant(false, 'Listener is not exist.');
     }
+  };
 
-    // 添加一个消息对象
-    Messenger.prototype.addTarget = function(target, name){
-        var targetObj = new Target(target, name,  this.prefix);
-        this.targets[name] = targetObj;
-    };
+  /**
+   * 包装的方法
+   * @param listener
+   * @returns {function(*)}
+   * @private
+   */
+  _wrapFunc = listener => {
+    return e => {
+      const m = this._decode(e.data);
+      // 校验 project（有点鸡肋）
+      if (m.project === this.project) listener(m.message);
+    }
+  };
 
-    // 初始化消息监听
-    Messenger.prototype.initListen = function(){
-        var self = this;
-        var generalCallback = function(msg){
-            if(typeof msg == 'object' && msg.data){
-                msg = msg.data;
-            }
-            
-            var msgPairs = msg.split('__Messenger__');
-            var msg = msgPairs[1];
-            var pairs = msgPairs[0].split('|');
-            var prefix = pairs[0];
-            var name = pairs[1];
+  _encode = message => ({
+    message,
+    project: this.project,
+  });
 
-            for(var i = 0; i < self.listenFunc.length; i++){
-                if (prefix + name === self.prefix + self.name) {
-                    self.listenFunc[i](msg);
-                }
-            }
-        };
+  _decode = message => message;
 
-        if ( supportPostMessage ){
-            if ( 'addEventListener' in document ) {
-                window.addEventListener('message', generalCallback, false);
-            } else if ( 'attachEvent' in document ) {
-                window.attachEvent('onmessage', generalCallback);
-            }
-        } else {
-            // 兼容IE 6/7
-            window.navigator[this.prefix + this.name] = generalCallback;
-        }
-    };
+  send = message => {
+    this.target.postMessage(
+      this._encode(message),
+      this.origin
+    );
+  };
+}
 
-    // 监听消息
-    Messenger.prototype.listen = function(callback){
-        var i = 0;
-        var len = this.listenFunc.length;
-        var cbIsExist = false;
-        for (; i < len; i++) {
-            if (this.listenFunc[i] == callback) {
-                cbIsExist = true;
-                break;
-            }
-        }
-        if (!cbIsExist) {
-            this.listenFunc.push(callback);
-        }
-    };
-    // 注销监听
-    Messenger.prototype.clear = function(){
-        this.listenFunc = [];
-    };
-    // 广播消息
-    Messenger.prototype.send = function(msg){
-        var targets = this.targets,
-            target;
-        for(target in targets){
-            if(targets.hasOwnProperty(target)){
-                targets[target].send(msg);
-            }
-        }
-    };
-
-    return Messenger;
-})();
+export default Messenger;
