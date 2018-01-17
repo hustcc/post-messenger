@@ -3,7 +3,7 @@
  * Contract: i@hust.cc
  */
 
-import { invariant, isChannelMatch } from './utils';
+import { isChannelMatch } from './utils';
 
 /**
  * const messenger = new Messenger('appid', window.parent);
@@ -16,9 +16,8 @@ import { invariant, isChannelMatch } from './utils';
  */
 class Messenger {
   constructor(project, target, origin = '*') {
-    invariant(!project.includes('-'), 'Project can not contains `-`.');
-    this.project = project; // project 是一个唯一的 id，可以用于做消息验证
-    this.target = typeof target === 'string' ? document.querySelector(target) : target;
+    this.project = project; // project 是一个唯一的 id，可以用于做消息验证，区分大应用
+    this.target = typeof target === 'string' ? document.querySelector(target).contentWindow : target;
 
     this.origin = origin;
     // 最终 on message 的方法
@@ -29,11 +28,21 @@ class Messenger {
   }
 
   /**
-   * listen channel by listener
+   * 只监听一次
    * @param channel
    * @param listener
    */
-  on = (channel, listener) => {
+  once = (channel, listener) => {
+    this.on(channel, listener, true);
+  };
+
+  /**
+   * listen channel by listener
+   * @param channel
+   * @param listener
+   * @param once
+   */
+  on = (channel, listener, once = false) => {
     // 如果是第一个 on 事件，那么先绑定一下
     if (this.channelListeners.length === 0) {
       this.listener = this._listenerEntry();
@@ -43,22 +52,26 @@ class Messenger {
     this.channelListeners.push({
       channel,
       listener,
+      once,
     });
   };
 
   /**
    * cancel listen with listener
+   * @param channel
    * @param listener
    */
-  off = listener => {
+  off = (channel, listener) => {
     if (listener === undefined) {
       this.channelListeners = [];
     } else {
       for (let i = 0; i < this.channelListeners.length; i += 1) {
-        // 找到 listern
-        if (this.channelListeners[i].listener === listener) {
+        const { channel: c, listener: l } = this.channelListeners[i];
+        // 找到 listener
+        if (c === channel && l === listener) {
           // 删除这一个
           this.channelListeners.splice(i, 1);
+          i -= 1;
         }
       }
     }
@@ -90,12 +103,18 @@ class Messenger {
   _listenerEntry = () => {
     return e => {
       const { channel: msgChannel, message, project } = this._decode(e.data);
-      // 校验 project（有点鸡肋）
+      // 校验 project 项目
       if (project === this.project) {
         // 遍历执行 channel listeners
-        this.channelListeners.forEach(({ channel, listener }) => {
+        this.channelListeners.forEach(({ channel, listener, once }) => {
           // 符合的才执行
-          if (isChannelMatch(channel, msgChannel)) listener(message, e);
+          if (isChannelMatch(channel, msgChannel)) {
+            listener(message, e);
+            if (once) {
+              // 取消
+              this.off(channel, listener);
+            }
+          }
         });
       }
     }
@@ -107,7 +126,7 @@ class Messenger {
       window.addEventListener('message', listener, false);
     } else if (window.attachEvent) {
       window.attachEvent('onmessage', listener);
-    };
+    }
   };
 
   _offMessage = listener => {

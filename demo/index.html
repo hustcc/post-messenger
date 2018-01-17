@@ -12,8 +12,9 @@
 <body>
   <div id="root">
     <pre id="list"></pre>
-    <iframe name="iframe_name" src="./iframe.html"></iframe>
+    <iframe id="iframe" name="iframe_name" src="./iframe.html"></iframe>
     <div>
+      <input type="button" value="Once" onclick="javascript: onceListener()" />
       <input type="button" value="On" onclick="javascript: onListener()" />
       <input type="button" value="Off" onclick="javascript: offListener()" />
       <input type="button" value="Send" onclick="javascript: sendMessage()" />
@@ -21,7 +22,7 @@
   </div>
 <script src="../lib/post-messenger.min.js" type="application/javascript"></script>
 <script type="application/javascript">
-  var messenger = new PostMessenger('uniqueId', window.iframe_name);
+  var messenger = new PostMessenger('uniqueId', '#iframe');
 
   function listener(message) {
     const r = document.querySelector('#list');
@@ -29,12 +30,16 @@
     r.innerHTML = r.innerHTML + '\n' + message;
   }
 
+  function onceListener() {
+    messenger.once('iframe.*', listener);
+  }
+
   function onListener() {
     messenger.on('iframe.*', listener);
   }
 
   function offListener() {
-    messenger.off(listener);
+    messenger.off('iframe.*', listener);
   }
 
   function sendMessage() {
