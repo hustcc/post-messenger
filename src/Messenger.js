@@ -110,11 +110,11 @@ class Messenger {
         this.channelListeners.forEach(({ channel, listener, once }) => {
           // 符合的才执行
           if (isChannelMatch(channel, msgChannel)) {
-            listener(message, e);
             if (once) {
               // 取消
               this.off(channel, listener);
             }
+            listener(message, e);
           }
         });
       }
@@ -123,20 +123,12 @@ class Messenger {
 
   _onMessage = listener => {
     // 监听事件
-    if (window.addEventListener) {
-      window.addEventListener('message', listener, false);
-    } else if (window.attachEvent) {
-      window.attachEvent('onmessage', listener);
-    }
+    window.addEventListener('message', listener, false);
   };
 
   _offMessage = listener => {
     // 取消事件
-    if (window.removeEventListener) {
-      window.removeEventListener('message', listener, false);
-    } else if (window.attachEvent) {
-      window.attachEvent('onmessage', listener);
-    }
+    window.removeEventListener('message', listener, false);
   };
 
   _encode = (channel, message) => ({

@@ -1,7 +1,8 @@
-# post-messenger [![npm](https://img.shields.io/npm/v/post-messenger.svg)](https://www.npmjs.com/package/post-messenger)
+# post-messenger
 
 > A simple wrapper of window.postMessage for iframes.
 
+[![npm](https://img.shields.io/npm/v/post-messenger.svg)](https://www.npmjs.com/package/post-messenger) [![Build Status](https://travis-ci.org/hustcc/post-messager.svg?branch=master)](https://travis-ci.org/hustcc/post-messager) [![Coverage Status](https://coveralls.io/repos/github/hustcc/post-messager/badge.svg?branch=master)](https://coveralls.io/github/hustcc/post-messager?branch=master)
 
 ## Install
 

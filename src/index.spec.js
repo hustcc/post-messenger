@@ -8,5 +8,5 @@ import Messenger from '.';
 describe('index', () => {
   test('export', () => {
     expect(Messenger).toBeDefined();
-  })
+  });
 });

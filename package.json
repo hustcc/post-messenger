@@ -1,11 +1,12 @@
 {
   "name": "post-messenger",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple wrapper of window.postMessage for iframes.",
   "main": "lib/post-messenger.min.js",
   "scripts": {
     "test": "jest",
     "clean": "rimraf ./lib",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "dev": "npm run clean && cross-env NODE_ENV=production webpack --watch",
     "build": "npm run clean && cross-env NODE_ENV=production webpack",
     "prepublish": "npm run build"
@@ -28,24 +29,24 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.6.1",
+    "coveralls": "^3.0.0",
     "cross-env": "^5.1.3",
     "jest": "^21.2.1",
     "jsdom": "^11.5.1",
+    "mitt": "^1.1.3",
     "rimraf": "^2.6.2",
     "webpack": "^3.10.0"
   },
   "jest": {
     "setupFiles": [
-      "<rootDir>/__tests__/setup.js"
+      "<rootDir>/__tests__/setup.js",
+      "<rootDir>/__tests__/jest-postmessage-mock.js"
     ],
     "testRegex": "(/src/.*(test|spec))\\.(js)$",
     "moduleFileExtensions": [
       "js",
       "json"
     ],
-    "moduleNameMapper": {
-      "//post-messenger": "<rootDir>/__tests__/post-messenger.js"
-    },
     "transform": {
       "^.+\\.js?$": "babel-jest"
     },
