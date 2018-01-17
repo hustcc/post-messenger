@@ -62,7 +62,8 @@ class Messenger {
    * @param listener
    */
   off = (channel, listener) => {
-    if (listener === undefined) {
+    // 清空所有
+    if (listener === undefined && channel === undefined) {
       this.channelListeners = [];
     } else {
       for (let i = 0; i < this.channelListeners.length; i += 1) {

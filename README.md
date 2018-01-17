@@ -47,7 +47,7 @@ The instance has 4 apis.
 
  - **messenger.once(channel, listener)**: add one message listener on channel for once.
  - **messenger.on(channel, listener)**: add one message listener on channel.
- - **messenger.off([listener])**: remove listener, if listener is undefined, remove all.
+ - **messenger.off(channel, listener)**: remove listener, if channel and listener is undefined, remove all.
  - **messenger.send(channel, message)**: send one message to channel.
 
 
