@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:hustcc/post-messager.git"
+    "url": "git@github.com:hustcc/post-messenger.git"
   },
   "keywords": [
     "postMessage",
     "iframe",
-    "post-messager"
+    "post-messenger"
   ],
   "author": "ProtoTeam",
   "license": "MIT",
