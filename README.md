@@ -40,10 +40,10 @@ There is only one class named `PostMessenger`, you can get the instance by:
 // projectId is a unique id for namespance.
 // targetDocument is parent window or the iframe which you want to send message.
 
-const messenger = new PostMessenger(projectId, targetDocument);
+const messenger = new PostMessenger(projectId, targetContentWindow);
 ```
 
-The instance has 3 apis.
+The instance has 4 apis.
 
  - **messenger.once(channel, listener)**: add one message listener on channel for once.
  - **messenger.on(channel, listener)**: add one message listener on channel.
