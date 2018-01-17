@@ -3,86 +3,129 @@
  * Contract: i@hust.cc
  */
 
-import { invariant } from './utils';
+import { invariant, isChannelMatch } from './utils';
 
 /**
  * const messenger = new Messenger('appid', window.parent);
  *
- * messenger.on((message) => { }); // listen
+ * messenger.on('channel', message => { }); // listen channel
  *
  * messenger.send('Hello world'); // send message to window.parent
  *
- * messenger.off(); // un listen
+ * messenger.off(func); // un listen
  */
 class Messenger {
   constructor(project, target, origin = '*') {
     invariant(!project.includes('-'), 'Project can not contains `-`.');
     this.project = project; // project 是一个唯一的 id，可以用于做消息验证
     this.target = typeof target === 'string' ? document.querySelector(target) : target;
-    this.origin = origin;
 
+    this.origin = origin;
+    // 最终 on message 的方法
     this.listener = null;
+
+    // 不同 channel 的监听器
+    this.channelListeners = [];
   }
 
-  on = listener => {
-    if (typeof listener !== 'function') {
-      return;
+  /**
+   * listen channel by listener
+   * @param channel
+   * @param listener
+   */
+  on = (channel, listener) => {
+    // 如果是第一个 on 事件，那么先绑定一下
+    if (this.channelListeners.length === 0) {
+      this.listener = this._listenerEntry();
+      this._onMessage(this.listener); // 注册 on message 方法
     }
-    if (!this.listener) {
-      this.listener = this._wrapFunc(listener);
-      // 监听事件
-      if (window.addEventListener) {
-        window.addEventListener('message', this.listener, false);
-      } else if (window.attachEvent) {
-        window.attachEvent('onmessage', this.listener);
-      }
-    } else {
-      invariant(false, 'Listener is exist.');
-    }
+
+    this.channelListeners.push({
+      channel,
+      listener,
+    });
   };
 
-
-  off = () => {
-    if (this.listener) {
-      // 取消事件
-      if (window.removeEventListener) {
-        window.removeEventListener('message', this.listener, false);
-      } else if (window.attachEvent) {
-        window.attachEvent('onmessage', this.listener);
-      }
-      this.listener = null;
+  /**
+   * cancel listen with listener
+   * @param listener
+   */
+  off = listener => {
+    if (listener === undefined) {
+      this.channelListeners = [];
     } else {
-      invariant(false, 'Listener is not exist.');
+      for (let i = 0; i < this.channelListeners.length; i += 1) {
+        // 找到 listern
+        if (this.channelListeners[i].listener === listener) {
+          // 删除这一个
+          this.channelListeners.splice(i, 1);
+        }
+      }
+    }
+
+    // 如果是最后一个 on 事件，那么需要取消绑定
+    if (this.channelListeners.length === 0 && this.listener) {
+      this._offMessage(this.listener); // 取消注册 on message 方法
+      this.listener = null;
     }
   };
 
   /**
-   * 包装的方法
-   * @param listener
+   * send message to channel
+   * @param channel
+   * @param message
+   */
+  send = (channel, message) => {
+    this.target.postMessage(
+      this._encode(channel, message),
+      this.origin
+    );
+  };
+
+  /**
+   * 包装的 on message 监听器方法
    * @returns {function(*)}
    * @private
    */
-  _wrapFunc = listener => {
+  _listenerEntry = () => {
     return e => {
-      const m = this._decode(e.data);
+      const { channel: msgChannel, message, project } = this._decode(e.data);
       // 校验 project（有点鸡肋）
-      if (m.project === this.project) listener(m.message);
+      if (project === this.project) {
+        // 遍历执行 channel listeners
+        this.channelListeners.forEach(({ channel, listener }) => {
+          // 符合的才执行
+          if (isChannelMatch(channel, msgChannel)) listener(message, e);
+        });
+      }
     }
   };
 
-  _encode = message => ({
+  _onMessage = listener => {
+    // 监听事件
+    if (window.addEventListener) {
+      window.addEventListener('message', listener, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onmessage', listener);
+    };
+  };
+
+  _offMessage = listener => {
+    // 取消事件
+    if (window.removeEventListener) {
+      window.removeEventListener('message', listener, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onmessage', listener);
+    }
+  };
+
+  _encode = (channel, message) => ({
+    channel,
     message,
     project: this.project,
   });
 
   _decode = message => message;
-
-  send = message => {
-    this.target.postMessage(
-      this._encode(message),
-      this.origin
-    );
-  };
 }
 
 export default Messenger;

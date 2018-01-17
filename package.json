@@ -1,10 +1,10 @@
 {
   "name": "post-messenger",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple wrapper of window.postMessage for iframes.",
   "main": "lib/post-messenger.min.js",
   "scripts": {
-    "test": "echo success.",
+    "test": "jest",
     "clean": "rimraf ./lib",
     "dev": "npm run clean && cross-env NODE_ENV=production webpack --watch",
     "build": "npm run clean && cross-env NODE_ENV=production webpack",
@@ -23,12 +23,41 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-jest": "^21.2.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.6.1",
     "cross-env": "^5.1.3",
+    "jest": "^21.2.1",
+    "jsdom": "^11.5.1",
     "rimraf": "^2.6.2",
     "webpack": "^3.10.0"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/__tests__/setup.js"
+    ],
+    "testRegex": "(/src/.*(test|spec))\\.(js)$",
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ],
+    "moduleNameMapper": {
+      "//post-messenger": "<rootDir>/__tests__/post-messenger.js"
+    },
+    "transform": {
+      "^.+\\.js?$": "babel-jest"
+    },
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js}",
+      "!**/node_modules/**",
+      "!**/vendor/**"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ]
   }
 }

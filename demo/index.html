@@ -1,35 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>post-messenger - parent</title>
-	<style>
-		iframe, pre {
-			width: 100%;
-		}
-	</style>
+  <meta charset="UTF-8">
+  <title>post-messenger - parent</title>
+  <style>
+    iframe, pre {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-	<div id="root">
-		<pre id="list"></pre>
-		<iframe name="iframe_name" src="./iframe.html"></iframe>
-		<div>
-			<input type="button" value="Send" onclick="javascript: sendMessage()" />
-		</div>
-	</div>
+  <div id="root">
+    <pre id="list"></pre>
+    <iframe name="iframe_name" src="./iframe.html"></iframe>
+    <div>
+      <input type="button" value="On" onclick="javascript: onListener()" />
+      <input type="button" value="Off" onclick="javascript: offListener()" />
+      <input type="button" value="Send" onclick="javascript: sendMessage()" />
+    </div>
+  </div>
 <script src="../lib/post-messenger.min.js" type="application/javascript"></script>
 <script type="application/javascript">
-	var messenger = new PostMessenger('uniqueId', window.iframe_name);
+  var messenger = new PostMessenger('uniqueId', window.iframe_name);
 
-  messenger.on(function(message) {
-		const r = document.querySelector('#list');
-		console.log(message);
-		r.innerHTML = r.innerHTML + '\n' + message;
-  });
+  function listener(message) {
+    const r = document.querySelector('#list');
+    console.log(message);
+    r.innerHTML = r.innerHTML + '\n' + message;
+  }
 
-	function sendMessage() {
-    messenger.send(new Date() + ', Hello world.');
-	}
+  function onListener() {
+    messenger.on('iframe.*', listener);
+  }
+
+  function offListener() {
+    messenger.off(listener);
+  }
+
+  function sendMessage() {
+    messenger.send('iframe.data', new Date() + ', Hello world.');
+  }
 </script>
 </body>
 </html>

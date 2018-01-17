@@ -23,3 +23,36 @@ export const invariant = (condition, format, ...args) => {
     throw error;
   }
 };
+
+const channelMatchLoop = (needles, channels) => {
+  const [n, ...on] = needles;
+  const [c, ...oc] = channels;
+  if (n !== c && ![n, c].includes('*')) return false;
+  // 最后一个，且长度相同
+  // a.b.c - a.b.c
+  // a.b.* - a.b.c
+  // a.b.c - a.b.*
+  if (on.length === 0 && oc.length === 0) {
+    return n === c || [n, c].includes('*');
+  }
+
+  // a.b - a.b.c false
+  // a.b - a.b.* false
+  // a.* - a.b.c true
+  if (on.length === 0) return n === '*';
+
+  // a.b.c - a.b false
+  // a.b.* - a.b false
+  // a.b.c - a.* true
+  if (oc.length === 0) return c === '*';
+
+  // 递归
+  return channelMatchLoop(on, oc);
+};
+
+/**
+ * 判断 needle 是否在 channel 之内
+ * @param needle
+ * @param channel
+ */
+export const isChannelMatch = (needle, channel) => channelMatchLoop(needle.split('.'), channel.split('.'));
