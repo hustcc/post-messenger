@@ -27,13 +27,13 @@ export const invariant = (condition, format, ...args) => {
 const channelMatchLoop = (needles, channels) => {
   const [n, ...on] = needles;
   const [c, ...oc] = channels;
-  if (n !== c && ![n, c].includes('*')) return false;
+  if (n !== c && [n, c].indexOf('*') === -1) return false;
   // 最后一个，且长度相同
   // a.b.c - a.b.c
   // a.b.* - a.b.c
   // a.b.c - a.b.*
   if (on.length === 0 && oc.length === 0) {
-    return n === c || [n, c].includes('*');
+    return n === c || [n, c].indexOf('*') !== -1;
   }
 
   // a.b - a.b.c false
