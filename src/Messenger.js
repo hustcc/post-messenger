@@ -3,7 +3,7 @@
  * Contract: i@hust.cc
  */
 
-import { isChannelMatch } from './utils';
+import { isChannelMatch, invariant } from './utils';
 
 /**
  * const messenger = new Messenger('appid', window.parent);
@@ -17,7 +17,12 @@ import { isChannelMatch } from './utils';
 class Messenger {
   constructor(project, target, origin = '*') {
     this.project = project; // project 是一个唯一的 id，可以用于做消息验证，区分大应用
-    this.target = typeof target === 'string' ? document.querySelector(target).contentWindow : target;
+
+    // target can be selector, dom, contentWindow
+    this.target = typeof target === 'string' ? document.querySelector(target) : target;
+    this.target = this.target.postMessage ? this.target : this.target.contentWindow;
+
+    invariant(this.target.postMessage, 'Messenger target should be a contentWindow.');
 
     this.origin = origin;
     // 最终 on message 的方法
