@@ -18,7 +18,8 @@
   "keywords": [
     "postMessage",
     "iframe",
-    "post-messenger"
+    "post-messenger",
+    "cross-document"
   ],
   "author": "ProtoTeam",
   "license": "MIT",
