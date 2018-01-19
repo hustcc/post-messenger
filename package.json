@@ -1,6 +1,6 @@
 {
   "name": "post-messenger",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A simple wrapper of window.postMessage for iframes.",
   "main": "lib/post-messenger.min.js",
   "scripts": {
@@ -8,8 +8,7 @@
     "clean": "rimraf ./lib",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "dev": "npm run clean && cross-env NODE_ENV=production webpack --watch",
-    "build": "npm run clean && cross-env NODE_ENV=production webpack",
-    "prepublish": "npm run build"
+    "build": "npm run clean && cross-env NODE_ENV=production webpack"
   },
   "repository": {
     "type": "git",
