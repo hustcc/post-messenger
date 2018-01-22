@@ -3,7 +3,8 @@
  * Contract: i@hust.cc
  */
 
-import { isChannelMatch, invariant } from './utils';
+import namespace from 'namespace-matcher';
+import { invariant } from './utils';
 
 /**
  * const messenger = new Messenger('appid', window.parent);
@@ -114,7 +115,7 @@ class Messenger {
         // 遍历执行 channel listeners
         this.channelListeners.forEach(({ channel, listener, once }) => {
           // 符合的才执行
-          if (isChannelMatch(channel, msgChannel)) {
+          if (namespace(channel).match(msgChannel)) {
             if (once) {
               // 取消
               this.off(channel, listener);
