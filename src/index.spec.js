@@ -4,9 +4,11 @@
  */
 
 import Messenger from '.';
+import MessengerDist from '..';
 
 describe('index', () => {
   test('export', () => {
     expect(Messenger).toBeDefined();
+    expect(MessengerDist).toBeDefined();
   });
 });

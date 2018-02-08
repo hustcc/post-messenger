@@ -60,8 +60,5 @@
       "node_modules",
       "src"
     ]
-  },
-  "dependencies": {
-    "namespace-matcher": "^0.0.1"
   }
 }

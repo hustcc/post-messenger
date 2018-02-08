@@ -3,7 +3,7 @@
  * Contract: i@hust.cc
  */
 
-import namespace from 'namespace-matcher';
+import namespace from './namespace';
 import { invariant } from './utils';
 
 /**
