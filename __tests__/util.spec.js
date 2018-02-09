@@ -3,7 +3,7 @@
  * Contract: i@hust.cc
  */
 
-import { invariant } from './utils';
+import { invariant } from '../src/utils';
 
 describe('utils', () => {
   test('invariant', () => {

@@ -1,14 +1,15 @@
 {
   "name": "post-messenger",
-  "version": "0.0.7",
-  "description": "A simple wrapper of window.postMessage for iframes.",
-  "main": "lib/post-messenger.min.js",
+  "version": "0.0.8",
+  "description": "A wrapper of window.postMessage for cross-document communication.",
+  "main": "lib/index.js",
   "scripts": {
     "test": "jest",
     "clean": "rimraf ./lib",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "dev": "npm run clean && cross-env NODE_ENV=production webpack --watch",
-    "build": "npm run clean && cross-env NODE_ENV=production webpack"
+    "buildUMD": "cross-env NODE_ENV=production webpack",
+    "build": "npm run clean && cross-env NODE_ENV=production babel src -d lib && npm run buildUMD"
   },
   "repository": {
     "type": "git",
@@ -42,7 +43,7 @@
       "<rootDir>/__tests__/setup.js",
       "<rootDir>/__tests__/jest-postmessage-mock.js"
     ],
-    "testRegex": "(/src/.*(test|spec))\\.(js)$",
+    "testRegex": "(/__tests__/.*(test|spec))\\.(js)$",
     "moduleFileExtensions": [
       "js",
       "json"

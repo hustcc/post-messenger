@@ -1,4 +1,4 @@
-const namespace = require('./namespace');
+const namespace = require('../src/namespace');
 
 describe('namespace', () => {
   test(' - match', function() {

@@ -3,7 +3,7 @@
  * Contract: i@hust.cc
  */
 
-import Messenger from './Messenger';
+import Messenger from '../src/Messenger';
 
 let messenger = null;
 

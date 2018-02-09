@@ -3,7 +3,7 @@
  * Contract: i@hust.cc
  */
 
-import Messenger from '.';
+import Messenger from '../src/index';
 import MessengerDist from '..';
 
 describe('index', () => {
