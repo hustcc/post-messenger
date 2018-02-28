@@ -7,13 +7,15 @@ import namespace from './namespace';
 import { invariant } from './utils';
 
 /**
- * const messenger = new Messenger('appid', window.parent);
+ * const messenger = new Messenger('project', window.parent);
  *
  * messenger.on('channel', message => { }); // listen channel
  *
- * messenger.send('Hello world'); // send message to window.parent
+ * messenger.once('channel_once', message => { }); // listen channel
  *
- * messenger.off(func); // un listen
+ * messenger.send('channel', 'Hello world'); // send message to window.parent
+ *
+ * messenger.off(channel, func); // cancel listen
  */
 class Messenger {
   constructor(project, target, origin = '*') {
@@ -23,7 +25,7 @@ class Messenger {
     this.target = typeof target === 'string' ? document.querySelector(target) : target;
     this.target = this.target.postMessage ? this.target : this.target.contentWindow;
 
-    invariant(this.target.postMessage, 'Messenger target should be a contentWindow.');
+    invariant(this.target.postMessage, 'Messenger\'s target should be a contentWindow.');
 
     this.origin = origin;
     // 最终 on message 的方法
