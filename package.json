@@ -5,11 +5,10 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "jest",
-    "clean": "rimraf ./lib",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "dev": "npm run clean && cross-env NODE_ENV=production webpack --watch",
-    "buildUMD": "cross-env NODE_ENV=production webpack",
-    "build": "npm run clean && cross-env NODE_ENV=production babel src -d lib && npm run buildUMD"
+    "build:umd": "rimraf ./dist && cross-env NODE_ENV=production webpack",
+    "build:lib": "rimraf ./lib && cross-env NODE_ENV=production babel src -d lib",
+    "build": "npm run build:umd && npm run build:lib && npm run test"
   },
   "repository": {
     "type": "git",

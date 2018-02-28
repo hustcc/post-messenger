@@ -10,7 +10,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'post-messenger.min.js',
-    path: path.resolve(__dirname, 'lib'),
+    path: path.resolve(__dirname, 'dist'),
     library: 'PostMessenger',
     libraryTarget: 'umd',
     umdNamedDefine: true

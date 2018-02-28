@@ -4,11 +4,11 @@
  */
 
 import Messenger from '../src/index';
-import MessengerDist from '..';
+import MessengerLib from '..';
 
 describe('index', () => {
   test('export', () => {
     expect(Messenger).toBeDefined();
-    expect(MessengerDist).toBeDefined();
+    expect(MessengerLib).toBeDefined();
   });
 });
