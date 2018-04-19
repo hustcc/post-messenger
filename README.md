@@ -1,59 +1,99 @@
 # post-messenger
 
-> A simple wrapper of window.postMessage for cross-document communication.
+> A simple wrapper of `window.postMessage` for cross-document communication with each other.
 >
-> 一个简单的 window.postMessage 封装，用于跨文档的数据通信。
+> 一个简单的 window.postMessage 封装，用于跨文档的双向数据通信。
 
-[![npm](https://img.shields.io/npm/v/post-messenger.svg)](https://www.npmjs.com/package/post-messenger) [![Build Status](https://travis-ci.org/hustcc/post-messenger.svg?branch=master)](https://travis-ci.org/hustcc/post-messenger) [![Coverage Status](https://coveralls.io/repos/github/hustcc/post-messenger/badge.svg?branch=master)](https://coveralls.io/github/hustcc/post-messenger?branch=master)
+[![Build Status](https://travis-ci.org/hustcc/post-messenger.svg?branch=master)](https://travis-ci.org/hustcc/post-messenger)
+[![Coverage Status](https://coveralls.io/repos/github/hustcc/post-messenger/badge.svg?branch=master)](https://coveralls.io/github/hustcc/post-messenger?branch=master)
+[![npm](https://img.shields.io/npm/v/post-messenger.svg)](https://www.npmjs.com/package/post-messenger)
+[![npm](https://img.shields.io/npm/dm/post-messenger.svg)](https://www.npmjs.com/package/post-messenger)
+
 
 ## Install
+
 
 > npm i --save post-messenger
 
 or import it by `script` in HTML.
 
 
+
 ## Usage
 
-Show you the demo code.
+
+ - In `parent` document.
 
 ```js
 import PostMessenger from 'post-messenger';
 
-const messenger = new PostMessenger('uniqueId', window.iframe_name);
+// connect to iframe
+const messenger = new PostMessenger('chat', window.iframe_name);
 
 const listener = message => {
   console.log(message);
 }
-messenger.once('iframe1.*', listener);
 
-messenger.on('iframe1.*', listener);
+// listen the messages
+messenger.once('room1.*', listener);
 
-messenger.send('parent', 'Hello world.');
-
-messenger.off('iframe1.*', listener);
+messenger.on('room1.user1', listener);
 ```
+
+
+ - In `iframe` document.
+
+```js
+import PostMessenger from 'post-messenger';
+
+// connect to parent
+const messenger = new PostMessenger('chat', window.parent);
+
+const listener = message => {
+  console.log(message);
+}
+
+// send messages
+messenger.send('room1', 'All users of room1 will received.');
+
+messenger.send('*', 'broadcast message.');
+```
+
+Full example can be found [here](http://git.hust.cc/post-messenger/demo/), and code [here](demo).
 
 
 ## API
 
+
 There is only one class named `PostMessenger`, you can get the instance by:
 
 ```js
-// projectId is a unique id for namespance.
-// targetDocument is parent window or the iframe which you want to send message.
-
+// projectId: the theme of communication.
+// targetDocument: the document which you want to connect and communicate.
 const messenger = new PostMessenger(projectId, targetContentWindow);
 ```
 
 The instance has 4 apis.
 
- - **messenger.once(channel, listener)**: add one message listener on channel for once.
- - **messenger.on(channel, listener)**: add one message listener on channel.
- - **messenger.off(channel, listener)**: remove listener, if channel and listener is undefined, remove all.
- - **messenger.send(channel, message)**: send one message to channel.
+ - **messenger.once(channel, listener)**
+
+Add a message listener on channel for once.
+
+ - **messenger.on(channel, listener)**
+
+Add a message listener on channel.
+
+ - **messenger.off([channel, listener])**
+
+Remove listener, if `channel` and `listener` are all `undefined`, remove all.
+
+ - **messenger.send(channel, message)**
+
+Send a message to the channel.
+
 
 
 # License
 
-MIT
+
+MIT@[hustcc](https://github.com/hustcc).
