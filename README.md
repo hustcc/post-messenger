@@ -28,16 +28,16 @@ or import it by `script` in HTML.
 import PostMessenger from 'post-messenger';
 
 // connect to iframe
-const messenger = new PostMessenger('chat', window.iframe_name);
+const pm = new PostMessenger('chat', window.iframe_name);
 
 const listener = message => {
   console.log(message);
 }
 
 // listen the messages
-messenger.once('room1.*', listener);
+pm.once('room1.*', listener);
 
-messenger.on('room1.user1', listener);
+pm.on('room1.user1', listener);
 ```
 
 
@@ -47,16 +47,16 @@ messenger.on('room1.user1', listener);
 import PostMessenger from 'post-messenger';
 
 // connect to parent
-const messenger = new PostMessenger('chat', window.parent);
+const pm = new PostMessenger('chat', window.parent);
 
 const listener = message => {
   console.log(message);
 }
 
 // send messages
-messenger.send('room1', 'All users of room1 will received.');
+pm.send('room1', 'All users of room1 will received.');
 
-messenger.send('*', 'broadcast message.');
+pm.send('*', 'broadcast message.');
 ```
 
 Full example can be found [here](http://git.hust.cc/post-messenger/demo/), and code [here](demo).
@@ -70,24 +70,24 @@ There is only one class named `PostMessenger`, you can get the instance by:
 ```js
 // projectId: the theme of communication.
 // targetDocument: the document which you want to connect and communicate.
-const messenger = new PostMessenger(projectId, targetContentWindow);
+const pm = new PostMessenger(projectId, targetContentWindow);
 ```
 
 The instance has 4 apis.
 
- - **messenger.once(channel, listener)**
+ - **pm.once(channel, listener)**
 
 Add a message listener on channel for once.
 
- - **messenger.on(channel, listener)**
+ - **pm.on(channel, listener)**
 
 Add a message listener on channel.
 
- - **messenger.off([channel, listener])**
+ - **pm.off([channel, listener])**
 
 Remove listener, if `channel` and `listener` are all `undefined`, remove all.
 
- - **messenger.send(channel, message)**
+ - **pm.send(channel, message)**
 
 Send a message to the channel.
 

@@ -16,7 +16,7 @@
 </div>
 <script src="../dist/post-messenger.min.js" type="application/javascript"></script>
 <script type="application/javascript">
-  var messenger = new PostMessenger('uniqueId', window.parent);
+  var pm = new PostMessenger('uniqueId', window.parent);
 
   function listener(message) {
     const r = document.querySelector('#list');
@@ -25,19 +25,19 @@
   }
 
   function onceListener() {
-    messenger.once('iframe.*', listener);
+    pm.once('iframe.*', listener);
   }
 
   function onListener() {
-    messenger.on('iframe.*', listener);
+    pm.on('iframe.*', listener);
   }
 
   function offListener() {
-    messenger.off('iframe.*', listener);
+    pm.off('iframe.*', listener);
   }
 
   function sendMessage() {
-    messenger.send('iframe.msg', new Date() + ', Hello world.');
+    pm.send('iframe.msg', new Date() + ', Hello world.');
   }
 </script>
 </body>
