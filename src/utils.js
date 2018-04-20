@@ -23,3 +23,13 @@ export const invariant = (condition, format, ...args) => {
     throw error;
   }
 };
+
+
+export const listen = listener => {
+  window.addEventListener('message', listener, false);
+
+};
+
+export const unListen = listener => {
+  window.removeEventListener('message', listener, false);
+};

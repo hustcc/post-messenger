@@ -4,7 +4,7 @@
  */
 
 import namespace from './namespace';
-import { invariant } from './utils';
+import { invariant, listen, unListen } from './utils';
 
 /**
  * const messenger = new Messenger('project', window.parent);
@@ -40,7 +40,7 @@ class Messenger {
    * @param channel
    * @param listener
    */
-  once = (channel, listener) => {
+  once(channel, listener) {
     this.on(channel, listener, true);
   };
 
@@ -50,11 +50,11 @@ class Messenger {
    * @param listener
    * @param once
    */
-  on = (channel, listener, once = false) => {
+  on(channel, listener, once = false) {
     // 如果是第一个 on 事件，那么先绑定一下
     if (this.channelListeners.length === 0) {
       this.listener = this._listenerEntry();
-      this._onMessage(this.listener); // 注册 on message 方法
+      listen(this.listener); // 注册 on message 方法
     }
 
     this.channelListeners.push({
@@ -69,7 +69,7 @@ class Messenger {
    * @param channel
    * @param listener
    */
-  off = (channel, listener) => {
+  off(channel, listener) {
     // 清空所有
     if (listener === undefined && channel === undefined) {
       this.channelListeners = [];
@@ -85,11 +85,7 @@ class Messenger {
       }
     }
 
-    // 如果是最后一个 on 事件，那么需要取消绑定
-    if (this.channelListeners.length === 0 && this.listener) {
-      this._offMessage(this.listener); // 取消注册 on message 方法
-      this.listener = null;
-    }
+    this._check();
   };
 
   /**
@@ -97,7 +93,7 @@ class Messenger {
    * @param channel
    * @param message
    */
-  send = (channel, message) => {
+  send(channel, message) {
     this.target.postMessage(
       this._encode(channel, message),
       this.origin
@@ -105,47 +101,56 @@ class Messenger {
   };
 
   /**
+   * 检查是够需要取消 message 监听
+   * @private
+   */
+  _check() {
+    // 如果是最后一个 on 事件，那么需要取消绑定
+    if (this.channelListeners.length === 0 && this.listener) {
+      unListen(this.listener); // 取消注册 on message 方法
+      this.listener = null;
+    }
+  }
+
+  /**
    * 包装的 on message 监听器方法
    * @returns {function(*)}
    * @private
    */
-  _listenerEntry = () => {
+  _listenerEntry() {
     return e => {
       const { channel: msgChannel, message, project } = this._decode(e.data);
       // 校验 project 项目
       if (project === this.project) {
         // 遍历执行 channel listeners
-        this.channelListeners.forEach(({ channel, listener, once }) => {
+        for (let i = 0; i < this.channelListeners.length; i += 1) {
+          const { channel, listener, once } = this.channelListeners[i];
           // 符合的才执行
           if (namespace(channel).match(msgChannel)) {
             if (once) {
-              // 取消
-              this.off(channel, listener);
+              // 删除监听器
+              this.channelListeners.splice(i, 1);
+              i -= 1;
             }
             listener(message, e);
           }
-        });
+        }
+        this._check();
       }
     }
   };
 
-  _onMessage = listener => {
-    // 监听事件
-    window.addEventListener('message', listener, false);
-  };
+  _encode(channel, message) {
+    return {
+      channel,
+      message,
+      project: this.project,
+    };
+  }
 
-  _offMessage = listener => {
-    // 取消事件
-    window.removeEventListener('message', listener, false);
-  };
-
-  _encode = (channel, message) => ({
-    channel,
-    message,
-    project: this.project,
-  });
-
-  _decode = message => message;
+  _decode(message) {
+    return message;
+  }
 }
 
 export default Messenger;
