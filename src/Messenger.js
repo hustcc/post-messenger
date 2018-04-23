@@ -25,8 +25,6 @@ class Messenger {
     this.target = (typeof target === 'string' ? document.querySelector(target) : target) || {};
     this.target = (this.target.postMessage ? this.target : this.target.contentWindow) || {};
 
-    invariant(this.target.postMessage, 'Messenger\'s target should be a contentWindow.');
-
     this.origin = origin;
     // 最终 on message 的方法
     this.listener = null;
@@ -94,6 +92,9 @@ class Messenger {
    * @param message
    */
   send(channel, message) {
+    // just throw when need to send message.
+    invariant(this.target.postMessage, 'Messenger\'s target should be a contentWindow.');
+
     this.target.postMessage(
       this._encode(channel, message),
       this.origin

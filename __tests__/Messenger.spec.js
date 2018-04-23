@@ -93,6 +93,10 @@ describe('Messenger', () => {
   test('exception', () => {
     expect(() => {
       new Messenger('');
+    }).not.toThrow();
+
+    expect(() => {
+      new Messenger('').send('a', 1);
     }).toThrow('Messenger\'s target should be a contentWindow.');
   });
 });
