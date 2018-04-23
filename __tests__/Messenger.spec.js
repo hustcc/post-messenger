@@ -88,4 +88,11 @@ describe('Messenger', () => {
     expect(messenger.listener).toBe(null);
     expect(messenger.channelListeners.length).toBe(0);
   });
+
+  // exception
+  test('exception', () => {
+    expect(() => {
+      new Messenger('');
+    }).toThrow('Messenger\'s target should be a contentWindow.');
+  });
 });

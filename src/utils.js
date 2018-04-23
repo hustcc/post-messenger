@@ -10,15 +10,11 @@
  * @param args
  */
 export const invariant = (condition, format, ...args) => {
-  if (!format) {
-    throw new Error('invariant requires an error message argument.');
-  }
-
   if (!condition) {
     let argIndex = 0;
     const errorMsg = format.replace(/%s/g, () => `${args[argIndex++]}`);
     const error = new Error(errorMsg);
-    error.name = 'Invariant Violation';
+    error.name = 'Invariant';
     error.framesToPop = 1; // we don't care about invariant's own frame
     throw error;
   }

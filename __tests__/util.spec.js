@@ -7,8 +7,6 @@ import { invariant } from '../src/utils';
 
 describe('utils', () => {
   test('invariant', () => {
-    expect(() => { invariant(true, '') }).toThrow('invariant requires an error message argument.');
-
     expect(() => { invariant(true, 'hello') }).not.toThrow();
 
     expect(() => { invariant('', '%s', 'hello') }).toThrow('hello');
