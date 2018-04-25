@@ -8,7 +8,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/hustcc/post-messenger/badge.svg?branch=master)](https://coveralls.io/github/hustcc/post-messenger?branch=master)
 [![npm](https://img.shields.io/npm/v/post-messenger.svg)](https://www.npmjs.com/package/post-messenger)
 [![npm](https://img.shields.io/npm/dm/post-messenger.svg)](https://www.npmjs.com/package/post-messenger)
-
+[![gzip](http://img.badgesize.io/https://unpkg.com/post-messenger/dist/post-messenger.min.js?compression=gzip)](https://unpkg.com/post-messenger/dist/post-messenger.min.js)
 
 ## Install
 
