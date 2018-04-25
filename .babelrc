@@ -1,7 +1,25 @@
 {
-  "presets": ["env"],
-  "plugins": [
-    "transform-class-properties",
-    "add-module-exports"
-  ]
+  "env": {
+    "production": {
+      "presets": [
+        [
+          "env",
+          {
+            "modules": false
+          }
+        ]
+      ],
+      "plugins": [
+        "transform-class-properties",
+        "add-module-exports"
+      ]
+    },
+    "development": {
+      "presets": ["env"],
+      "plugins": [
+        "transform-class-properties",
+        "add-module-exports"
+      ]
+    }
+  }
 }

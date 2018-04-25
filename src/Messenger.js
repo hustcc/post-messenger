@@ -7,15 +7,15 @@ import namespace from './namespace';
 import { invariant, listen, unListen } from './utils';
 
 /**
- * const messenger = new Messenger('project', window.parent);
+ * const pm = new Messenger('project', window.parent);
  *
- * messenger.on('channel', message => { }); // listen channel
+ * pm.on('channel', message => { }); // listen channel
  *
- * messenger.once('channel_once', message => { }); // listen channel
+ * pm.once('channel_once', message => { }); // listen channel
  *
- * messenger.send('channel', 'Hello world'); // send message to window.parent
+ * pm.send('channel', 'Hello world'); // send message to window.parent
  *
- * messenger.off(channel, func); // cancel listen
+ * pm.off(channel, func); // cancel listen
  */
 class Messenger {
   constructor(project, target, origin = '*') {

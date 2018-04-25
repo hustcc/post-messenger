@@ -15,7 +15,11 @@
 
 > npm i --save post-messenger
 
-or import it by `script` in HTML.
+or import it by `script` in HTML, then get `PostMessenger` on window.
+
+```html
+<script src="https://unpkg.com/post-messenger/dist/post-messenger.min.js"></script>
+```
 
 
 
