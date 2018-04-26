@@ -1,13 +1,13 @@
 {
   "name": "post-messenger",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A wrapper of window.postMessage for cross-document communication.",
   "main": "lib/index.js",
   "scripts": {
-    "test": "NODE_ENV=development jest",
+    "test": "NODE_ENV=babel jest",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "build:umd": "rimraf ./dist && cross-env NODE_ENV=production rollup -c",
-    "build:lib": "rimraf ./lib && cross-env NODE_ENV=production babel src -d lib",
+    "build:umd": "rimraf ./dist && cross-env NODE_ENV=rollup rollup -c",
+    "build:lib": "rimraf ./lib && cross-env NODE_ENV=babel babel src -d lib",
     "build": "npm run build:umd && npm run build:lib && npm run test"
   },
   "repository": {

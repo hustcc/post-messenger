@@ -1,6 +1,6 @@
 {
   "env": {
-    "production": {
+    "rollup": {
       "presets": [
         [
           "env",
@@ -14,7 +14,7 @@
         "add-module-exports"
       ]
     },
-    "development": {
+    "babel": {
       "presets": ["env"],
       "plugins": [
         "transform-class-properties",
