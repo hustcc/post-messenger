@@ -10,4 +10,6 @@ src
 .babelrc
 .eslintrc
 .eslintignore
+.idea
+npm-debug.*
 index.html
