@@ -8,8 +8,11 @@ import babel from 'rollup-plugin-babel';
 
 export default {
   entry: 'src/index.js',
-  format: 'umd',
-  name: 'PostMessenger',
+  output: {
+    file: 'dist/post-messenger.min.js',
+    name: 'PostMessenger',
+    format: 'umd',
+  },
   plugins: [
     babel({
       exclude: 'node_modules/**',
@@ -19,5 +22,4 @@ export default {
       compress: { warnings: false }
     }),
   ],
-  dest: 'dist/post-messenger.min.js'
 };
