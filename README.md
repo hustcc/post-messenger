@@ -10,6 +10,16 @@
 [![npm](https://img.shields.io/npm/dm/post-messenger.svg)](https://www.npmjs.com/package/post-messenger)
 [![gzip](http://img.badgesize.io/https://unpkg.com/post-messenger/dist/post-messenger.min.js?compression=gzip)](https://unpkg.com/post-messenger/dist/post-messenger.min.js)
 
+
+
+## Feature
+
+ - Simple wrapper for `postMessage`.
+ - Use it just like `event emitter`.
+ - Event channel `namespace` supported.
+
+
+
 ## Install
 
 
@@ -66,6 +76,7 @@ pm.send('*', 'broadcast message.');
 Full example can be found [here](http://git.hust.cc/post-messenger/demo/), and code [here](demo).
 
 
+
 ## API
 
 
@@ -98,6 +109,5 @@ Send a message to the channel.
 
 
 # License
-
 
 MIT@[hustcc](https://github.com/hustcc).
