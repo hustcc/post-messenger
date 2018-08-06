@@ -7,151 +7,132 @@ import namespace from './namespace';
 import { invariant, listen, unListen } from './utils';
 
 /**
- * const pm = new Messenger('project', window.parent);
+ * const pm = Messenger('project', window.parent);
  *
- * pm.on('channel', message => { }); // listen channel
+ * // listen channel
+ * pm.on('channel', message => { });
  *
- * pm.once('channel_once', message => { }); // listen channel
+ * // listen channel
+ * pm.once('channel_once', message => { });
  *
- * pm.send('channel', 'Hello world'); // send message to window.parent
+ * // send message to window.parent
+ * pm.send('channel', 'Hello world');
  *
  * pm.off(channel, func); // cancel listen
  */
-class Messenger {
-  constructor(project, target, origin = '*') {
-    this.project = project; // project 是一个唯一的 id，可以用于做消息验证，区分大应用
+export default (project, target, origin = '*') => {
+  // 最终 on message 的方法
+  let listener = null;
+  // 不同 channel 的监听器
+  let channelListeners = [];
 
-    // target can be selector, dom, contentWindow
-    this.target = (typeof target === 'string' ? document.querySelector(target) : target) || {};
-    this.target = (this.target.postMessage ? this.target : this.target.contentWindow) || {};
+  const encode = (ch, message) => {
+    return {
+      ch,
+      message,
+      project,
+    };
+  };
 
-    this.origin = origin;
-    // 最终 on message 的方法
-    this.listener = null;
-
-    // 不同 channel 的监听器
-    this.channelListeners = [];
-  }
-
-  /**
-   * 只监听一次
-   * @param channel
-   * @param listener
-   */
-  once(channel, listener) {
-    this.on(channel, listener, true);
+  const decode = message => {
+    return message;
   };
 
   /**
-   * listen channel by listener
-   * @param channel
-   * @param listener
-   * @param once
+   * 检查是够需要取消 message 监听
    */
-  on(channel, listener, once = false) {
+  const check = () => {
+    // 如果是最后一个 on 事件，那么需要取消绑定
+    if (channelListeners.length === 0 && listener) {
+      unListen(listener); // 取消注册 on message 方法
+      listener = null;
+    }
+  };
+
+  /**
+   * 包装的 on message 监听器方法
+   * @returns {function(*)}
+   */
+  const listenerEntry = () => {
+    return e => {
+      const { ch: msgChannel, message, project: msgProject } = decode(e.data);
+      // 校验 project 项目
+      if (msgProject === project) {
+        // 遍历执行 channel listeners
+        for (let i = 0; i < channelListeners.length; i += 1) {
+          const { ch, cb, once } = channelListeners[i];
+          // 符合的才执行
+          if (namespace(ch).match(msgChannel)) {
+            if (once) {
+              // 删除监听器
+              channelListeners.splice(i, 1);
+              i -= 1;
+            }
+            cb(message, e);
+          }
+        }
+        check();
+      }
+    }
+  };
+
+  const on = (ch, cb, once = false) => {
     // 如果是第一个 on 事件，那么先绑定一下
-    if (this.channelListeners.length === 0) {
-      this.listener = this._listenerEntry();
-      listen(this.listener); // 注册 on message 方法
+    if (channelListeners.length === 0) {
+      listener = listenerEntry();
+      listen(listener); // 注册 on message 方法
     }
 
-    this.channelListeners.push({
-      channel,
-      listener,
+    channelListeners.push({
+      ch,
+      cb,
       once,
     });
   };
 
-  /**
-   * cancel listen with listener
-   * @param channel
-   * @param listener
-   */
-  off(channel, listener) {
+  const once = (ch, cb) => {
+    on(ch, cb, true);
+  };
+
+  const off = (ch, cb) => {
     // 清空所有
-    if (listener === undefined && channel === undefined) {
-      this.channelListeners = [];
+    if (ch === undefined && cb === undefined) {
+      channelListeners = [];
     } else {
-      for (let i = 0; i < this.channelListeners.length; i += 1) {
-        const { channel: c, listener: l } = this.channelListeners[i];
+      for (let i = 0; i < channelListeners.length; i += 1) {
+        const { ch: h, cb: b } = channelListeners[i];
         // 找到 listener
-        if (c === channel && l === listener) {
+        if (h === ch && b === cb) {
           // 删除这一个
-          this.channelListeners.splice(i, 1);
+          channelListeners.splice(i, 1);
           i -= 1;
         }
       }
     }
 
-    this._check();
+    check();
   };
 
-  /**
-   * send message to channel
-   * @param channel
-   * @param message
-   */
-  send(channel, message) {
+  const send = (ch, message) => {
     // just throw when need to send message.
-    invariant(this.target.postMessage, 'Messenger\'s target should be a contentWindow.');
+    invariant(target && target.postMessage, 'Messenger\'s target should has `postMessage` function.');
 
-    this.target.postMessage(
-      this._encode(channel, message),
-      this.origin
+    target.postMessage(
+      encode(ch, message),
+      origin
     );
   };
 
-  /**
-   * 检查是够需要取消 message 监听
-   * @private
-   */
-  _check() {
-    // 如果是最后一个 on 事件，那么需要取消绑定
-    if (this.channelListeners.length === 0 && this.listener) {
-      unListen(this.listener); // 取消注册 on message 方法
-      this.listener = null;
-    }
-  }
+  const getListener = () => listener;
 
-  /**
-   * 包装的 on message 监听器方法
-   * @returns {function(*)}
-   * @private
-   */
-  _listenerEntry() {
-    return e => {
-      const { channel: msgChannel, message, project } = this._decode(e.data);
-      // 校验 project 项目
-      if (project === this.project) {
-        // 遍历执行 channel listeners
-        for (let i = 0; i < this.channelListeners.length; i += 1) {
-          const { channel, listener, once } = this.channelListeners[i];
-          // 符合的才执行
-          if (namespace(channel).match(msgChannel)) {
-            if (once) {
-              // 删除监听器
-              this.channelListeners.splice(i, 1);
-              i -= 1;
-            }
-            listener(message, e);
-          }
-        }
-        this._check();
-      }
-    }
-  };
-
-  _encode(channel, message) {
-    return {
-      channel,
-      message,
-      project: this.project,
-    };
-  }
-
-  _decode(message) {
-    return message;
+  return {
+    // props
+    getListener,
+    channelListeners,
+    // functions
+    on,
+    once,
+    off,
+    send,
   }
 }
-
-export default Messenger;

@@ -22,7 +22,7 @@
   </div>
 <script src="../dist/post-messenger.min.js" type="application/javascript"></script>
 <script type="application/javascript">
-  var pm = new PostMessenger('uniqueId', '#iframe');
+  var pm = new PostMessenger('uniqueId', document.querySelector('#iframe').contentWindow);
 
   function listener(message) {
     const r = document.querySelector('#list');

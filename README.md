@@ -2,7 +2,7 @@
 
 > A simple wrapper of `window.postMessage` for cross-document communication with each other.
 >
-> 一个简单的 window.postMessage 封装，用于跨文档的双向数据通信。
+> 一个简单的 `window.postMessage` 封装，用于跨文档的双向数据通信。
 
 [![Build Status](https://travis-ci.org/hustcc/post-messenger.svg?branch=master)](https://travis-ci.org/hustcc/post-messenger)
 [![Coverage Status](https://coveralls.io/repos/github/hustcc/post-messenger/badge.svg?branch=master)](https://coveralls.io/github/hustcc/post-messenger?branch=master)
@@ -42,7 +42,7 @@ or import it by `script` in HTML, then get `PostMessenger` on window.
 import PostMessenger from 'post-messenger';
 
 // connect to iframe
-const pm = new PostMessenger('chat', window.iframe_name);
+const pm = PostMessenger('chat', window.iframe_name.contentWindow);
 
 const listener = message => {
   console.log(message);
@@ -61,7 +61,7 @@ pm.on('room1.user1', listener);
 import PostMessenger from 'post-messenger';
 
 // connect to parent
-const pm = new PostMessenger('chat', window.parent);
+const pm = PostMessenger('chat', window.parent);
 
 const listener = message => {
   console.log(message);
@@ -73,19 +73,19 @@ pm.send('room1', 'All users of room1 will received.');
 pm.send('*', 'broadcast message.');
 ```
 
-Full example can be found [here](http://git.hust.cc/post-messenger/demo/), and code [here](demo).
+Full example can be found [here](https://git.hust.cc/post-messenger/demo/), and code [here](demo).
 
 
 
 ## API
 
 
-There is only one class named `PostMessenger`, you can get the instance by:
+There is only one function named `PostMessenger`, you can get the instance by:
 
 ```js
 // projectId: the theme of communication.
 // targetDocument: the document which you want to connect and communicate.
-const pm = new PostMessenger(projectId, targetContentWindow);
+const pm = PostMessenger(projectId, targetContentWindow);
 ```
 
 The instance has 4 apis.
@@ -106,6 +106,21 @@ Remove listener, if `channel` and `listener` are all `undefined`, remove all.
 
 Send a message to the channel.
 
+
+
+# Scenes
+
+> The `window.postMessage()` method safely enables cross-origin communication between Window objects; e.g., between a page and a pop-up that it spawned, or between a page and an iframe embedded within it.
+
+The communicate target can be:
+
+ - Window.open
+ - Window.opener
+ - HTMLIFrameElement.contentWindow
+ - Window.parent
+ - Window.frames
+
+Reference [here](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage).
 
 
 # License
