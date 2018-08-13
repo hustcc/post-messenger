@@ -26,9 +26,9 @@ export default (project, target, origin = '*') => {
   // 不同 channel 的监听器
   let channelListeners = [];
 
-  const encode = (ch, message) => {
+  const encode = (channel, message) => {
     return {
-      ch,
+      channel,
       message,
       project,
     };
@@ -55,7 +55,7 @@ export default (project, target, origin = '*') => {
    */
   const listenerEntry = () => {
     return e => {
-      const { ch: msgChannel, message, project: msgProject } = decode(e.data);
+      const { channel: msgChannel, message, project: msgProject } = decode(e.data);
       // 校验 project 项目
       if (msgProject === project) {
         // 遍历执行 channel listeners

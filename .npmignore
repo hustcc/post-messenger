@@ -5,6 +5,7 @@ site
 doc
 demo
 src
+rollup.config.js
 .gitignore
 .travis.yml
 .babelrc
