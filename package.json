@@ -1,6 +1,6 @@
 {
   "name": "post-messenger",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A wrapper of window.postMessage for cross-document communication.",
   "main": "lib/index.js",
   "scripts": {

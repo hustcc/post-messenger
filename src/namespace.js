@@ -2,7 +2,7 @@
  * Created by hustcc on 19/01/18.
  */
 
-import { invariant } from './utils'
+import { invariant } from './utils';
 
 function match(namespaces, needles, option) {
   const n = needles[0];

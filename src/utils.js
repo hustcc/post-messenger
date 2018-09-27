@@ -4,28 +4,27 @@
  */
 
 /**
+ * 是否支持 post message
+ * @returns boolean
+ */
+export const postMessageSupported = () => typeof window !== 'undefined' && !!window.postMessage;
+
+/**
  * 抛错
  * @param condition
- * @param format
- * @param args
+ * @param msg
  */
-export const invariant = (condition, format, ...args) => {
+export const invariant = (condition, msg) => {
   if (!condition) {
-    let argIndex = 0;
-    const errorMsg = format.replace(/%s/g, () => `${args[argIndex++]}`);
-    const error = new Error(errorMsg);
-    error.name = 'Invariant';
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
+    throw new Error(msg);
   }
 };
 
 
 export const listen = listener => {
-  window.addEventListener('message', listener, false);
-
+  postMessageSupported() && window.addEventListener('message', listener, false);
 };
 
 export const unListen = listener => {
-  window.removeEventListener('message', listener, false);
+  postMessageSupported() && window.removeEventListener('message', listener, false);
 };

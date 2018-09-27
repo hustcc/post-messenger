@@ -4,7 +4,7 @@
  */
 
 import namespace from './namespace';
-import { invariant, listen, unListen } from './utils';
+import { listen, unListen, invariant } from './utils';
 
 /**
  * const pm = Messenger('project', window.parent);
@@ -127,9 +127,9 @@ export default (project, target, origin = '*') => {
 
   return {
     // props
-    getListener,
     channelListeners,
     // functions
+    getListener,
     on,
     once,
     off,

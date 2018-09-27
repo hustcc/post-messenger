@@ -9,6 +9,6 @@ describe('utils', () => {
   test('invariant', () => {
     expect(() => { invariant(true, 'hello') }).not.toThrow();
 
-    expect(() => { invariant('', '%s', 'hello') }).toThrow('hello');
+    expect(() => { invariant('', 'hello') }).toThrow('hello');
   })
 });
