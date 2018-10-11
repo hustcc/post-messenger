@@ -83,7 +83,7 @@ Full example can be found [here](https://git.hust.cc/post-messenger/demo/), and 
 There is only one function named `PostMessenger`, you can get the instance by:
 
 ```js
-// projectId: the theme of communication.
+// projectId: the unique id of communication.
 // targetDocument: the document which you want to connect and communicate.
 const pm = PostMessenger(projectId, targetContentWindow);
 ```
